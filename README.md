@@ -2,7 +2,7 @@
 
 <h3>Manual</h3>
 
-<p> This repository contains code related to my thesis. See <a href="my code/debleed.m">debleed.m</a> for how to use it. For sound examples, visit <a href = "https://ccrma.stanford.edu/~orchi/Mic-bleed/sound_examples_quartet.html">string quartet</a> and <a href = "https://ccrma.stanford.edu/~orchi/Mic-bleed/sound_examples_drums.html">drums</a>.</p>
+<p> This repository contains code related to my PhD thesis at CCRMA. See <a href="my code/debleed.m">debleed.m</a> for how to use it. For sound examples, visit <a href = "https://ccrma.stanford.edu/~orchi/Mic-bleed/sound_examples_quartet.html">string quartet</a> and <a href = "https://ccrma.stanford.edu/~orchi/Mic-bleed/sound_examples_drums.html">drums</a>.</p>
 
 <h3>Abstract</h3>
 
