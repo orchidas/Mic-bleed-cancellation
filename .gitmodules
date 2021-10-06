@@ -1,10 +1,10 @@
-[submodule "rir-generator"]
+[submodule room_acoustics_simulation/RIR-Generator"]
 	path = room_acoustics_simulation/RIR-Generator
 	url = https://github.com/ehabets/RIR-Generator
-[submodule "blind-channel-identification"]
+[submodule "BSIE_toolbox"]
 	path = BSIE_toolbox
 	url = https://github.com/patrickanaylor/BSIE_toolbox
-[submodule "PEASS"]
+[submodule "Eval/PEASS-Software-v2.0.1"]
 	path = Eval/PEASS-Software-v2.0.1
 	url = https://gitlab.inria.fr/bass-db/peass
 [submodule "pyloudnorm"]
