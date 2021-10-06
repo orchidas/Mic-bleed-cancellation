@@ -20,11 +20,13 @@ function [s_hat, H_opt, H0] = debleed(xmic, Nsrc, fs, frameSize, hopSize, fftSiz
 % Author       Orchisama Das, 2020
 %%
 
+    plot_init = 0;
     if calib_flag
         calib_mat = varargin{1};
         calib_type = varargin{2};
-%         Sim = varargin{3};
-        
+        if length(varargin) > 2
+            plot_init = varargin{3};
+        end
     end
     
     
@@ -133,9 +135,9 @@ function [s_hat, H_opt, H0] = debleed(xmic, Nsrc, fs, frameSize, hopSize, fftSiz
                         if strcmp(calib_type,'spec-ratio')
                              
                              NUM = get_stft_from_audio(num, frameSize, hopSize, fftSize, win);
-%                              num_energy_dB = get_signal_energy(NUM);  %only frames that have significant leakage energy should be used for calibration
-%                              frames_to_consider = find(num_energy_dB >= max(num_energy_dB)-3);   %half the maximum loudness
-                             frames_to_consider = 1:size(NUM,1); % for drums, consider all frames
+                             num_energy_dB = get_signal_energy(NUM);  %only frames that have significant leakage energy should be used for calibration
+                             frames_to_consider = find(num_energy_dB >= max(num_energy_dB)-3);   %half the maximum loudness
+                             % frames_to_consider = 1:size(NUM,1); % for drums, consider all frames
                              H0(:,nmic,nsrc) = mean(NUM(frames_to_consider,:)./DEN(frames_to_consider,:),1);
                         
                         elseif strcmp(calib_type, 'gcc-phat')
@@ -155,28 +157,32 @@ function [s_hat, H_opt, H0] = debleed(xmic, Nsrc, fs, frameSize, hopSize, fftSiz
                  [~, H0(:,:,nsrc)] = estimate_tf_bci(calib_mat.src{nsrc}.mic,fs,Nmic,chan_L,nbins);
              end
              
-%             figure(nsrc);clf;             
-%             H0_2D = reshape(H0(:,:,nsrc),[nbins,Nmic]);
-%             h0 = ifft(H0_2D,nbins,1);
-%             hideal_2D = reshape(Sim.h_ideal(:,:,nsrc), [chan_L, Nmic]);
-%             Hideal_2D = fft(hideal_2D, nbins);
-%             
-%             for nmic = 1:Nmic
-%                 subplot(Nmic,1,nmic);
-% %                 stem([[hideal_2D(:,nmic); zeros(nbins-chan_L,1)],h0(:,nmic)]);grid on; hold on;
-% %                 xlim([0, chan_L]);ylim([-1 1]);
-%                 semilogx(freqaxis,mag2db(abs([Hideal_2D(:,nmic),H0_2D(:,nmic)])));grid on; hold on;
-%                 xlim([0, 20000]);               
-%             end
-%             sgtitle(['Source ', num2str(nsrc)]); 
-%             xlabel('Samples'); ylabel('Amplitude');
-%             legend('Actual','Spectral Ratio');
-            
-            
-%             semilogx(freqaxis, fftshift(mag2db(abs(H0_2D).^2),1));grid on;hold on;
-%             xlabel('Frequency (hz)'); ylabel('Magnitude (dB)');title('Initial transfer function');
-%             xlim([20,20000]);
-%             legend(legendcell(nsrc,:), 'interpreter','latex');drawnow;
+
+            if plot_init
+                % plot estimated initial transfer function
+                figure(nsrc);clf;             
+                H0_2D = reshape(H0(:,:,nsrc),[nbins,Nmic]);
+                h0 = ifft(H0_2D,nbins,1);
+                hideal_2D = reshape(Sim.h_ideal(:,:,nsrc), [chan_L, Nmic]);
+                Hideal_2D = fft(hideal_2D, nbins);
+                
+                for nmic = 1:Nmic
+                    subplot(Nmic,1,nmic);
+    %                 stem([[hideal_2D(:,nmic); zeros(nbins-chan_L,1)],h0(:,nmic)]);grid on; hold on;
+    %                 xlim([0, chan_L]);ylim([-1 1]);
+                    semilogx(freqaxis,mag2db(abs([Hideal_2D(:,nmic),H0_2D(:,nmic)])));grid on; hold on;
+                    xlim([0, fs/2]);               
+                end
+                sgtitle(['Source ', num2str(nsrc)]); 
+                xlabel('Samples'); ylabel('Amplitude');
+                legend('Actual','Spectral Ratio');
+                
+                
+                semilogx(freqaxis, fftshift(mag2db(abs(H0_2D).^2),1));grid on;hold on;
+                xlabel('Frequency (hz)'); ylabel('Magnitude (dB)');title('Initial transfer function');
+                xlim([20,fs/2]);
+                legend(legendcell(nsrc,:), 'interpreter','latex');drawnow;
+            end
 
         end
 
