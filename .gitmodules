@@ -1,4 +1,4 @@
-[submodule room_acoustics_simulation/RIR-Generator"]
+[submodule "room_acoustics_simulation/RIR-Generator"]
 	path = room_acoustics_simulation/RIR-Generator
 	url = https://github.com/ehabets/RIR-Generator
 [submodule "BSIE_toolbox"]
