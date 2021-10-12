@@ -8,7 +8,7 @@ folder_remote="Num\ mics/Num\ sources/N=2"
 # folder_remote="Num\ sources"
 
 # Declare an array of string with type
-#declare -a StringArray=("Ideal" "MCWF" "MLE")
+#declare -a StringArray=("Ideal" "MCWF" "MLE" "MAP")
 declare -a StringArray=("MLE")
 
  
