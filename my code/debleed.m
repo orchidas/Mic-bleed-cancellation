@@ -214,32 +214,6 @@ function [s_hat, H_opt, H0] = debleed(xmic, Nsrc, fs, frameSize, hopSize, fftSiz
         temp = S(:,1:nbins/2,:);
         S(:,nbins/2+1:end,:) = fliplr(conj(temp)); %conjugate symmetric spectrum 
 
-  
-    %% GEVD based Multichannel Wiener filter
-    
-%     elseif (strcmp(method, 'gevd_mwf'))
-%         
-%         S = zeros(Nframes, nbins, Nsrc);
-%         mu = sigma;   %more weight given to speech distortion
-%         for nmic = 1:Nmic
-%             int = get_stft_from_audio(interf(:,nmic), frameSize, hopSize, fftSize, win);
-%             if nmic == 1
-%                 Interf = zeros(size(int,1),size(int,2),Nmic);
-%                 Interf(:,:,1) = int;
-%             else
-%                 Interf(:,:,nmic) = int;
-%             end
-%         end
-% 
-%         parfor k = 1:nbins/2
-%             x = reshape(X(:,k,:), [Nframes,Nmic]).';
-%             interf_sig = reshape(Interf(:,k,:), [size(int,1),Nmic]).';
-%             S_hat = gevd_mwf(x,interf_sig,Nmic,Nsrc,mu);
-%             S(:,k,:) = reshape(S_hat.', [Nframes,1,Nsrc]);
-%             disp(['Frequency bin ' ,num2str(k),' has been processed']);        
-%         end
-%         
-%         S(:,nbins/2+1:end,:) = S(:,1:nbins/2,:); %symmetric spectrum 
 
     
     %% Maximum aposteriori probability
