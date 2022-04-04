@@ -76,7 +76,8 @@ for k = 1:length(sigma)
                 xmic = [xmic m];
             end  
                                     
-            [s_est, H_opt] = debleed(xmic,nsrc,fs,frameSize,hopSize,fftSize,method,sigma(k),calib_flag,Sim(l).calib(1),calib_type);
+            [s_est, H_opt] = debleed(xmic,nsrc,fs,frameSize,hopSize,fftSize,method,sigma(k),...
+              'calib_flag', calib_flag, 'calib_mat', Sim(l).calib(1), 'calib_type', calib_type);
             MLE(l).IR_est = H_opt;
             MLE(l).Nsrc = Sim(l).Nsrc;
             MLE(l).source = [MLE(l).source, s_est];

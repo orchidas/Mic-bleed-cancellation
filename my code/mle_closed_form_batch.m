@@ -1,10 +1,27 @@
-function [s_opt, H_opt] = mle_closed_form_batch(Nsrc, x, H_tilde, sigma)
+function [s_opt, H_opt] = mle_closed_form_batch(Nsrc, x, H_tilde, sigma, varargin)
 %%
 % For cost function J = \sum_{t=1}^T||x(t) - Hs(t)||^2 +
 %                       1/sigma ||H_tilde - H||^2, solve for
 % \nabla_s(t) J = 0, \nabla_H J = 0
 
 %%
+
+
+%% parse input
+p = inputParser;
+p.KeepUnmatched = true;
+addParameter(p,'max_iter',500);
+addParameter(p,'max_error');
+addParameter(p,'max_func_count',1e6);
+parse(p,varargin{:});
+
+
+max_iter = p.Results.max_iter;
+max_error = p.Results.max_error;
+max_func_count = p.Results.max_func_count;
+
+
+
 if sigma == 0
     H_opt = H_tilde;
     s_opt = H_opt\x;
@@ -27,7 +44,7 @@ end
     %optimization stopping criteria
     function stop = outfun(s,optimValues,state) 
         stop = false;
-        if optimValues.fval < 1e-2  
+        if optimValues.fval < max_error  
             stop = true; 
             disp('Stopping, small enough error');
         end
@@ -37,9 +54,16 @@ end
 fun = @f; % function
 nskip = size(x,1)/Nsrc;
 s0 =  0.01*randn(size(x(1:nskip:end,:))) + x(1:nskip:end,:);
-options = optimoptions('fsolve','Display','off', 'MaxIterations',500,...
-    'MaxFunctionEvaluations',1e4, 'OutputFcn',@outfun); 
-% options = optimoptions('fsolve','Display','off', 'MaxIterations',500); % optimizer options
+
+
+if isempty(max_error)
+    options = optimoptions('fsolve','Display','off', 'MaxIterations', max_iter, ...
+          'MaxFunctionEvaluations', max_func_count); % optimizer options
+else
+    options = optimoptions('fsolve','Display','off', 'MaxIterations',max_iter,...
+    'MaxFunctionEvaluations',max_func_count, 'OutputFcn', @outfun); 
+end
+
 
 [s_opt, fval, exitflag, output] = fsolve(fun,s0,options);
 if exitflag <= 0

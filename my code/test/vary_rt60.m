@@ -75,7 +75,7 @@ for k = 1:length(sigma)
             end
             
             [s_mle, H_opt] = debleed(xmic,N,fs,frameSize,hopSize,fftSize,method,sigma(k),...
-                calib_flag,Sim(l).calib(1),calib_type);
+                 'calib_flag', calib_flag, 'calib_mat', Sim(l).calib(1), 'calib_type', calib_type);
             MLE(l).IR_est = H_opt;
             MLE(l).rt60 = Sim(l).beta;
             MLE(l).V = Sim(l).V;

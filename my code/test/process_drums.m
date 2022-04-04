@@ -50,7 +50,8 @@ for k = 1:length(sigma)
     
     % my MLE/MAP estimator
      [s_mle, H_opt, H_init] = debleed(xmic,Nsrc,fs,frameSize,hopSize,fftSize,...
-         method,sigma(k),calib_flag,drums.calib(1),calib_type);
+         method, sigma(k),'calib_flag', calib_flag, 'calib_mat', drums.calib(1),...
+         'calib_type', calib_type, 'max_error' ,1e-2, 'max_func_count' ,1e4);
      
     % Kokkinis' MCWF estimator
 %     if sigma(k) == 0

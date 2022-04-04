@@ -1,4 +1,4 @@
-close all;
+close all; clear all;
 
 addpath('../.');
 addpath('../../kokkinis/.');
@@ -13,10 +13,10 @@ load([matpath, 'quartet_synthesized_data_var_distance_Nsrc=',num2str(N),'.mat'])
 sname = {'Va','Vcl','Vl1','Vl2'};
 fs = 48000;
 calib_type = 'spec-ratio';  %spectral ratio/gcc-phat/BCI
-method = 'map';   %MAP/MLE,
+method = 'mle';   %MAP/MLE,
 str_add = ['_', calib_type,'_', method];   
 dis = [Sim(:).dis];
-sigma = [1];
+sigma = [0];
 savepath = [savepath, 'N=',num2str(N),'/'];
 frameSize = 1024;
 hopSize = 512;
@@ -73,7 +73,8 @@ for k = 1:length(sigma)
                 xmic = [xmic m];
             end  
                         
-            [s_mle, H_opt] = debleed(xmic,N,fs,frameSize,hopSize,fftSize,method,sigma(k),calib_flag,Sim(l).calib(1),calib_type);  
+            [s_mle, H_opt] = debleed(xmic,N,fs,frameSize,hopSize,fftSize,method,sigma(k),...
+                'calib_flag', calib_flag, 'calib_mat', Sim(l).calib(1), 'calib_type', calib_type);  
             MLE(l).IR_est = H_opt;
             MLE(l).dist = Sim(l).dis;
             MLE(l).source = [MLE(l).source, s_mle];

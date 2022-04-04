@@ -1,10 +1,24 @@
-function [s_opt, H_opt] = map_closed_form_batch(x,H_tilde,sigma,Rss_inv,mu_s,Nsrc,sigma_w)
+function [s_opt, H_opt] = map_closed_form_batch(x,H_tilde,sigma,Rss_inv,mu_s,Nsrc,sigma_w, varargin)
 
 %%
 % For cost function J = \sum_{t=1}^T||x(t) - Hs(t)||^2 + (s(t) - mu_s)^T P_s^{-1} (s(t)- mu_s) + ...
 % trace((H-\tilde(H))^T.*P (H - \tilde{H})), solve for
 % \nabla_s(t) J = 0, \nabla_H J = 0
 %%
+
+%% parse input
+p = inputParser;
+p.KeepUnmatched = true;
+addParameter(p,'max_iter', 500);
+addParameter(p,'max_error',[]);
+addParameter(p,'max_func_count', 1e6);
+parse(p,varargin{:});
+
+
+max_iter = p.Results.max_iter;
+max_error = p.Results.max_error;
+max_func_count = p.Results.max_func_count;
+
 
 I = eye(Nsrc);
 % T = size(x,2);
@@ -40,9 +54,16 @@ end
 fun = @f; % function
 nskip = size(x,1)/Nsrc;
 s0 = x(1:nskip:end,:) +  0.01*randn(size(x(1:nskip:end,:)));
-options = optimoptions('fsolve','Display','off', 'MaxIterations',500,...
-     'MaxFunctionEvaluations',1e4, 'OutputFcn',@outfun); 
-% options = optimoptions('fsolve','Display','off', 'MaxIterations',500); % optimizer options
+
+if isempty(max_error)
+    options = optimoptions('fsolve','Display','off', 'MaxIterations', max_iter, ...
+          'MaxFunctionEvaluations', max_func_count); % optimizer options
+else
+    options = optimoptions('fsolve','Display','off', 'MaxIterations',max_iter,...
+    'MaxFunctionEvaluations',max_func_count, 'OutputFcn', @outfun); 
+end
+
+
 [s_opt, fval, exitflag, output] = fsolve(fun,s0,options);
 
 if exitflag <= 0

@@ -1,6 +1,6 @@
 %% test calibration algos by generating RIR with Image-source method
 
-close all;
+close all;clear all;
 addpath(genpath('../room_acoustics_simulation/RIR-Generator/.'));   %rir toolbox
 addpath(genpath('../BSIE_toolbox/.'));   %BSI toolbox
 
@@ -91,14 +91,14 @@ set(gca, 'FontUnits','points', 'FontWeight','normal', 'FontSize',8, 'FontName','
 
 %% GCC-PHAT with LS
 
-nbins = 2048;
-nreflect = 15;
-[H,rir] = estimate_tf_gain_delay(x(:,1),x(:,4),fs,nreflect,nbins,L,h);
-
-figure('Units','inches', 'Position',[0 0 3.3 2.5],'PaperPositionMode','auto');
-plot_filter(h(:,4), rir);
-set(gca, 'FontUnits','points', 'FontWeight','normal', 'FontSize',8, 'FontName','Times');   
-% print('../figures/bci_gcc_phat.eps', '-depsc');
+% nbins = 2048;
+% nreflect = 15;
+% [H,rir] = estimate_tf_gain_delay(x(:,1),x(:,4),fs,nreflect,nbins,L,h);
+% 
+% figure('Units','inches', 'Position',[0 0 3.3 2.5],'PaperPositionMode','auto');
+% plot_filter(h(:,4), rir);
+% set(gca, 'FontUnits','points', 'FontWeight','normal', 'FontSize',8, 'FontName','Times');   
+% % print('../figures/bci_gcc_phat.eps', '-depsc');
 
 %% spectral ratio
 
@@ -119,5 +119,46 @@ rir_spec = real(ifft(H0, fftSize));
 fig = figure('Units','inches', 'Position',[0 0 3.3 2.5],'PaperPositionMode','auto');
 plot_filter(h(:,4), rir_spec(1:L).');
 set(gca, 'FontUnits','points', 'FontWeight','normal', 'FontSize', 8, 'FontName','Times');   
-print('../figures/bci_spec_ratio.eps', '-depsc');
+% print('../figures/bci_spec_ratio.eps', '-depsc');
 
+%% all methods in same plot
+
+% time-domain fit
+%
+% fig = figure('Units','inches', 'Position',[0 0 3.3 2.5],'PaperPositionMode','auto');
+% ValueArray = {'--';'-.';'-'};
+% plt = plot(1:L, [normalize(h(:,4)), normalize(h_hat(:,4)), normalize(rir_spec(1:L)).']); grid on;
+% % [plt(:).LineStyle] = ValueArray{:};
+% xlabel('Time (samples)'); ylabel('Amplitude');
+% legend('Simulated','NMFLMS','Spec-ratio');
+% axis tight;
+% set(gca, 'FontUnits','points', 'FontWeight','normal', 'FontSize', 8, 'FontName','Times');   
+% print('../../figures/calib_IS.eps', '-depsc');
+
+
+% frequency domain fits
+
+nfft = 2048;
+freq_axis = linspace(0, fs/2, nfft/2);
+
+fig = figure('Units','inches', 'Position',[0 0 3.3 2.5],'PaperPositionMode','auto');
+semilogx(freq_axis, [get_magnitude_response(h(:,4),nfft), get_magnitude_response(h_hat(:,4),nfft), ...
+    get_magnitude_response(rir_spec(1:L).',nfft)]); grid on;
+xlim([20,10000]);ylim([-80,10]);
+xlabel('Frequency (Hz)');ylabel('Magnitude (dB)');
+legend('Simulated','NMFLMS','Spec-ratio', 'Location', 'southeast');
+axis tight;
+set(gca, 'FontUnits','points', 'FontWeight','normal', 'FontSize', 8, 'FontName','Times');   
+% print('../../figures/calib_IS_freq.eps', '-depsc');
+
+
+function [h_norm] = normalize(h)
+    h_norm = h./max(abs(h));
+end
+
+function [H_mag] = get_magnitude_response(h, nfft)
+    H = fft(h,nfft);
+    H = H(1:nfft/2);
+    H = H./max(abs(H));
+    H_mag = mag2db(abs(H));
+end

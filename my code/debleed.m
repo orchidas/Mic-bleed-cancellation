@@ -1,4 +1,4 @@
-function [s_hat, H_opt, H0] = debleed(xmic, Nsrc, fs, frameSize, hopSize, fftSize, method, sigma, calib_flag, varargin)
+function [s_hat, H_opt, H0] = debleed(xmic, Nsrc, fs, frameSize, hopSize, fftSize, method, sigma, varargin)
 
 %% 
 % Function to reduce microphone bleed and estimate MIMO transfer function'
@@ -16,19 +16,42 @@ function [s_hat, H_opt, H0] = debleed(xmic, Nsrc, fs, frameSize, hopSize, fftSiz
 % sigma        Regularization hyperparameter
 % calib_flag   How to estimate initial transfer function (0 or 1)
 % calib_mat    Calibration files (if available)
-%
+% max_iter, max_func_count, max_error - optimization parameters and
+% criteria for stopping
 % Author       Orchisama Das, 2020
 %%
-
-    plot_init = 0;
-    if calib_flag
-        calib_mat = varargin{1};
-        calib_type = varargin{2};
-        if length(varargin) > 2
-            plot_init = varargin{3};
-        end
-    end
     
+    p = inputParser;
+    p.KeepUnmatched = true;
+    addParameter(p,'max_iter',[]);
+    addParameter(p,'max_error',[]);
+    addParameter(p,'max_func_count',[]);
+    addParameter(p, 'calib_flag', 0);
+    addParameter(p, 'calib_mat', []);
+    addParameter(p, 'calib_type', []);
+    addParameter(p, 'plot_init', 0);
+    parse(p,varargin{:});
+
+
+    max_iter = p.Results.max_iter;
+    max_error = p.Results.max_error;
+    max_func_count = p.Results.max_func_count;
+    calib_flag =  p.Results.calib_flag;
+    calib_mat =  p.Results.calib_mat;
+    calib_type =  p.Results.calib_type;
+    plot_init = p.Results.plot_init;
+    
+  
+    
+%     plot_init = 0;
+%     if calib_flag
+%         calib_mat = varargin{1};
+%         calib_type = varargin{2};
+%         if length(varargin) > 2
+%             plot_init = varargin{3};
+%         end
+%     end
+%     
     
     Nmic = size(xmic,2);   %number of mics
     win = hann(frameSize);
@@ -112,7 +135,7 @@ function [s_hat, H_opt, H0] = debleed(xmic, Nsrc, fs, frameSize, hopSize, fftSiz
         H0 = zeros(nbins,Nmic,Nsrc);  %initial estimate of transfer function matrix from each source to each mic (nbins x nsources x nmics)
         legendcell = strings(Nsrc,Nmic);
         frac = Nmic/Nsrc;
-        chan_L = 2^7;
+        chan_L = 2^9;
         nreflect = 20;
         
         %loop over sources
@@ -205,7 +228,9 @@ function [s_hat, H_opt, H0] = debleed(xmic, Nsrc, fs, frameSize, hopSize, fftSiz
             x = reshape(X(:,k,:), [Nframes,Nmic]).';
             Hopt_2D = reshape(H_opt(k,:,:),[Nmic,Nsrc]);
 
-            [S_hat, H_hat] = mle_closed_form_batch(Nsrc, x, Hopt_2D, sigma);
+            [S_hat, H_hat] = mle_closed_form_batch(Nsrc, x, Hopt_2D, sigma,...
+                'max_iter', max_iter, 'max_func_count',max_func_count, 'max_error', max_error);
+            
             H_opt(k,:,:) = H_hat;
             S(:,k,:) = reshape(S_hat.', [Nframes,1,Nsrc]);
             disp(['Frequency bin ' ,num2str(k),' has been processed']);

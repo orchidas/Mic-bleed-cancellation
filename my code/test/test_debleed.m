@@ -27,7 +27,8 @@ end
 s_ideal = known_RTF(xmic, N, Sim.h_direct, frameSize, hopSize, fftSize);
 %%
 
-s_mle = debleed(xmic,N,fs,frameSize,hopSize,fftSize,method,sigma,calib_flag, Sim, calib_type);
+s_mle = debleed(xmic,N,fs,frameSize,hopSize,fftSize,method,sigma, 'calib_flag', calib_flag,...
+    'calib_mat', Sim, 'calib_type', calib_type);
 
 %%
 for src = 1:N    

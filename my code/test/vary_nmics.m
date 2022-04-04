@@ -16,7 +16,7 @@ method = 'map';     % MAP/MLE,
 str_add = ['_',calib_type,'_', method];  
 fs = 48000;
 Nmics = [Sim(:).Nmic];
-sigma = [0 1 100];
+sigma = [1];
 savepath = [savepath, 'N=',num2str(Nsrc),'/'];
 mu = 2;
 
@@ -64,7 +64,8 @@ for k = 1:length(sigma)
 %                 s_gevd_mwf = debleed(xmic,Nsrc,fs,frameSize,hopSize,fftSize,'gevd_mwf',mu,calib_flag,Sim(l).calib(1), '');  
             end
 
-            [s_mle, H_opt] = debleed(xmic,Nsrc,fs,frameSize,hopSize,fftSize,method,sigma(k),calib_flag,Sim(l).calib(1),calib_type);
+            [s_mle, H_opt] = debleed(xmic,Nsrc,fs,frameSize,hopSize,fftSize,method,sigma(k),...
+              'calib_flag', calib_flag, 'calib_mat', Sim(l).calib(1), 'calib_type', calib_type);
             MLE(l).IR_est = H_opt;
             MLE(l).Nmic = Sim(l).Nmic;
             MLE(l).source = [MLE(l).source, s_mle];
