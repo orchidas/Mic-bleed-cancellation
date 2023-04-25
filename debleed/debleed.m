@@ -41,17 +41,6 @@ function [s_hat, H_opt, H0] = debleed(xmic, Nsrc, fs, frameSize, hopSize, fftSiz
     calib_type =  p.Results.calib_type;
     plot_init = p.Results.plot_init;
     
-  
-    
-%     plot_init = 0;
-%     if calib_flag
-%         calib_mat = varargin{1};
-%         calib_type = varargin{2};
-%         if length(varargin) > 2
-%             plot_init = varargin{3};
-%         end
-%     end
-%     
     
     Nmic = size(xmic,2);   %number of mics
     win = hann(frameSize);
@@ -191,8 +180,6 @@ function [s_hat, H_opt, H0] = debleed(xmic, Nsrc, fs, frameSize, hopSize, fftSiz
                 
                 for nmic = 1:Nmic
                     subplot(Nmic,1,nmic);
-    %                 stem([[hideal_2D(:,nmic); zeros(nbins-chan_L,1)],h0(:,nmic)]);grid on; hold on;
-    %                 xlim([0, chan_L]);ylim([-1 1]);
                     semilogx(freqaxis,mag2db(abs([Hideal_2D(:,nmic),H0_2D(:,nmic)])));grid on; hold on;
                     xlim([0, fs/2]);               
                 end
@@ -214,7 +201,6 @@ function [s_hat, H_opt, H0] = debleed(xmic, Nsrc, fs, frameSize, hopSize, fftSiz
     
     
     %% batch processing over all frames
-    
     %% Maximum likelihood estimate
     
     if strcmp(method, 'mle')
