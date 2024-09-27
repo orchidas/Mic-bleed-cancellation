@@ -10,7 +10,6 @@ function [x] = get_audio_from_stft(X, hopSize)
         start = (i-1)*hopSize + 1;
         x_frame = (ifft(X(i,:), fftSize));
         x(start:start + fftSize - 1) = x(start:start + fftSize - 1) + x_frame.';
-%         start = start + hopSize;
     end
     x = real(x);
 

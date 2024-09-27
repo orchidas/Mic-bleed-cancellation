@@ -17,10 +17,6 @@ function [X] = get_stft_from_audio(x, frameSize, hopSize, fftSize, win)
         error('Hop size cannot be greater than frame size');
     end
 
-%     make sure window size is odd
-%     if(mod(frameSize,2) == 0)
-%         frameSize = frameSize+1;
-%     end
  
     %convert fftSize to power of 2 
     fftSize = 2^nextpow2(fftSize);

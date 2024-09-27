@@ -92,22 +92,22 @@ end
 % conditions for anova - normal distributions, same sample sizes,
 % independent samples, equal population variances (?)
 
-close all;
+% close all;
 % figure('Units','inches', 'Position',[0 0 2.9 3.3],'PaperPositionMode','auto');
-% set(gca, 'FontUnits','points', 'FontWeight','normal', 'FontSize',7, 'FontName','Times');
-[p1,tbl1,stats1] = anova1(totalAPS);
-bp = gca;
-bp.XAxis.TickLabels = plotLabels;
-bp.XAxis.TickLabelInterpreter = 'latex';
-ylim([0, 100]);ylabel('Rating');
-title('Perceptual quality of target signal');
-set(gca, 'FontUnits','points', 'FontWeight','normal', 'FontSize',10, 'FontName','Times');
-print('listening_test_APS.eps', '-depsc');
+% % set(gca, 'FontUnits','points', 'FontWeight','normal', 'FontSize',7, 'FontName','Times');
+% [p1,tbl1,stats1] = anova1(totalAPS);
+% bp = gca;
+% bp.XAxis.TickLabels = plotLabels;
+% bp.XAxis.TickLabelInterpreter = 'latex';
+% ylim([0, 100]);ylabel('Rating');
+% title('Perceptual quality of target signal');
+% set(gca, 'FontUnits','points', 'FontWeight','normal', 'FontSize',10, 'FontName','Times');
+% print('listening_test_APS.eps', '-depsc');
 
     
 %%
 close all;
-% figure('Units','inches', 'Position',[0 0 2.9 3.3],'PaperPositionMode','auto');
+figure('Units','inches', 'Position',[0 0 2.9 3.3],'PaperPositionMode','auto');
 % set(gca, 'FontUnits','points', 'FontWeight','normal', 'FontSize',7, 'FontName','Times');
 [p2,tbl2,stats2] = anova1(totalIPS);
 bp = gca;
@@ -116,8 +116,27 @@ bp.XAxis.TickLabelInterpreter = 'latex';
 ylim([0, 100]);ylabel('Rating');
 title('Amount of interference cancellation');
 set(gca, 'FontUnits','points', 'FontWeight','normal', 'FontSize',10, 'FontName','Times');
-print('listening_test_IPS.eps', '-depsc');
+% print('listening_test_IPS.eps', '-depsc');
+
 
 %% Results - p value signficantly small, all estimators have different means, 
 % i.e, they give significantly different results. The notches do not overlap,
 % i.e, none of the group medians overlap.
+
+%% 95% confidence intervals
+
+CI_IPS = zeros(length(nChoices),2);
+for k = 1:nChoices
+    SEM = std(totalIPS(:,k))/sqrt(length(totalIPS(:,k)));        % Standard Error
+    ts = tinv([0.025  0.975],length(totalIPS(:,k))-1);      % T-Score
+    CI_IPS(k,:) = mean(totalIPS(:,k)) + ts*SEM;  
+end
+
+
+CI_APS = zeros(length(nChoices),2);
+for k = 1:nChoices
+    SEM = std(totalAPS(:,k))/sqrt(length(totalAPS(:,k)));        % Standard Error
+    ts = tinv([0.025  0.975],length(totalAPS(:,k))-1);      % T-Score
+    CI_APS(k,:) = mean(totalAPS(:,k)) + ts*SEM;  
+end
+

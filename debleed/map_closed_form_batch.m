@@ -26,7 +26,6 @@ I = eye(Nsrc);
 
 if sigma == 0
     H_opt = H_tilde;
-%     s_opt = ((H_opt'*H_opt) + sigma_w*Rss_inv)\(H_opt'*x + sigma_w*Pxmu);
     s_opt = ((H_opt'*H_opt) + sigma_w*Rss_inv)\(H_opt'*x);
     return;
 end
@@ -36,7 +35,6 @@ end
         xs = x*s';
         ss = s*s';
         H = (H_tilde + sigma*xs)/(I + sigma*ss); %\nabla_H J = 0, / = A*inv(B)
-    %     y = ((H'*H) + sigma_w*Rss_inv)\(H'*x + sigma_w*Pxmu) - s;
         y = ((H'*H) + sigma_w*Rss_inv)\(H'*x) - s;
 
     end

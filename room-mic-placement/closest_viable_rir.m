@@ -32,9 +32,6 @@ for i = 1:Nmic
         h = h .*sign(g);
         h_rir(:,i,j) = h;
         [max_peak_val, max_peak_loc] = max(abs(h(min_peak_time:max_peak_time)));
-%         max_dev = max(diff(abs(h(min_peak_time:max_peak_time))));
-%         [~, possible_dp] = findpeaks(abs(h(min_peak_time:max_peak_time)),...
-%             'MinPeakHeight', max_peak_val/sqrt(2));
         delays(i,j) = max_peak_loc + min_peak_time - 1;
         if plot_data
             fig;clf;

@@ -28,14 +28,14 @@ fbins = 1:nfft/2;
 peak_pos = fbins(mode_idx);
 
 
-% figure;
-% plot(fbins, 20*log10(abs(H_ir(1:nfft/2,:,nsrc))));hold on;grid on;
-% for k = 1:length(peak_pos)
-%     xline(peak_pos(k), '-.k'); hold on;
-% end
-% hold off;
-% ylim([-80,0]);
-% set(gca,'xscale','log');
+figure;
+plot(fbins, 20*log10(abs(H_ir(1:nfft/2,:,nsrc))));hold on;grid on;
+for k = 1:length(peak_pos)
+    xline(peak_pos(k), '-.k'); hold on;
+end
+hold off;
+ylim([-80,0]);
+set(gca,'xscale','log');
 
 end
 

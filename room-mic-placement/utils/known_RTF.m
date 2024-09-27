@@ -18,15 +18,6 @@ for i = 1:Nmic
     end
 end
 
-%% use system equalization - does not work for MIMO systems
-
-% Li = length(h_ideal);
-% k = 0;
-% Nmic = size(xmic,2);
-% 
-% gh = lsinvfilt(h_ideal, Li, k);
-% g = reshape(gh, [Li, Nsrc, Nmic]);
-
 
 Nframes = size(X,1);
 nbins = size(X,2);

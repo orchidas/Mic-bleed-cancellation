@@ -17,12 +17,6 @@ cvx_begin
         A*h == zeros(N-K,1);   %decreasing RIR
 cvx_end
 
-% h0 = mean(g) + var(g)*randn(N,1);
-% [h, fval, exitflag, output] = fmincon(@costfn, h0, -A, zeros(N-tau,1),[],[], min(g), max(g));
-% 
-%     function err = costfn(h)
-%         err = norm((g - h)) + lambda*norm(h,1);
-%     end
 
 end
 

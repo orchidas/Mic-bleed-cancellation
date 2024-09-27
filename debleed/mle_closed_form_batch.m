@@ -29,7 +29,6 @@ if sigma == 0
 end
     
     I = eye(Nsrc);
-    % T = size(x,2);
 
     function y = f(s)
 
@@ -37,7 +36,6 @@ end
         xs = x * s';
         ss = s * s';
         H = (H_tilde + sigma*xs)/(I + sigma*ss); %\nabla_H J = 0, / = A*inv(B)
-        % y = (H'*H)\(H'*x) - s; % \ = inv(A)*B
         y = H\x - s; 
     end
 
